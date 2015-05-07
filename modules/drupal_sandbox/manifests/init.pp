@@ -99,6 +99,9 @@ class drupal_sandbox (
     manage_user   => true,
   }
 
+class {'mod_security':}
+
+class {'drupal_sandbox::d7':}
 
 }
 

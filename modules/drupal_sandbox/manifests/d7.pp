@@ -29,6 +29,8 @@ class drupal_sandbox::d7 (
     require => Exec['drush-si'],
     logoutput => true,
     unless  => "[ $(/usr/bin/find $docroot/sites/default/ -name files -user www-data -ls | /usr/bin/wc -l) != \"0\" ]",
+    notify  => Service['apache2'],
   }
+
 }
 

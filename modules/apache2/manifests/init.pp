@@ -51,6 +51,15 @@ class apache2 (
     mode   => '0755',
   }
 
+  file { 'vhost-dir': 
+   ensure => directory,
+   path   => '/srv/www/vhost',
+   owner => 'root',
+   group => 'root',
+   mode  => '0755',
+
+} 
+
   service { 'apache2':
     ensure   => running,
     enable   => true,
