@@ -1,6 +1,6 @@
 class drupal_sandbox::d7 (
     $drupal_version = '7.23',
-    $docroot        = '/srv/www/www.example.com',
+    $docroot        = '/srv/www/vhost/www.example.com',
     $dbname         = 'example'
 ) {
 
@@ -11,7 +11,7 @@ class drupal_sandbox::d7 (
 
   exec {'drush-dl-drupal':
     command => "/usr/local/bin/drush dl drupal-$drupal_version --drupal-project-rename=$dirname",
-    require => [ Class['drush'], File['/srv/www'], Class['perconadb'] ],
+    require => [ Class['drush'], File['/srv/www'], File['/srv/www/vhost'] ,Class['perconadb'] ],
     cwd     => $dirpath,
     creates => $docroot,
 
@@ -30,6 +30,15 @@ class drupal_sandbox::d7 (
     logoutput => true,
     unless  => "[ $(/usr/bin/find $docroot/sites/default/ -name files -user www-data -ls | /usr/bin/wc -l) != \"0\" ]",
     notify  => Service['apache2'],
+  }
+
+
+   exec {'RewriteBase':
+    command => "/bin/sed -i  s/'^[\\ ]*#[\\ ]*RewriteBase\\ \\/$'/' RewriteBase\\ \\/'/ $docroot/.htaccess",
+    require => Exec['drush-si'],
+    logoutput => true,
+    unless  => "[ $(/bin/grep -c \'^[\\ ]*#[\\ ]*RewriteBase\\ \\/$\' \'$docroot\'/.htaccess ) = \"0\" ]",
+    
   }
 
 }
