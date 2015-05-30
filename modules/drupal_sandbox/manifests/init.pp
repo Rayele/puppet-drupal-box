@@ -77,6 +77,8 @@ class drupal_sandbox (
 
   class { 'ntpdate': }
 
+  class { 'hardening': }
+
   class { 'apache2':
     port               => $apache_port,
     mpm_wk_max_clients => $apache_mpm_wk_max_clients,
