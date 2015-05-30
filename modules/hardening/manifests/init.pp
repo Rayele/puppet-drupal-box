@@ -7,8 +7,13 @@ class hardening {
 	#issue,motd
 	include hardening::issue
 
-	#remove packages
+	#remove packages(disabled due vagrant)
 	#include hardening::removepackages 
+
+	#sar enable
+	include hardening::sar
+
+
 
 	#disable irqbalance for better perfomance in multicore app.
 	file {'/etc/default/irqbalance': 

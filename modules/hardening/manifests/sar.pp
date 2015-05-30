@@ -1,5 +1,5 @@
 #
-class cishardening::sar {
+class hardening::sar {
 
   package { 'sysstat':
     ensure => installed,
