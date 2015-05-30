@@ -4,6 +4,11 @@ class hardening {
 	#enable network h.
 	include hardening::sysctl
 
+	#issue,motd
+	include hardening::issue
+
+	#remove packages
+	#include hardening::removepackages 
 
 	#disable irqbalance for better perfomance in multicore app.
 	file {'/etc/default/irqbalance': 
@@ -28,7 +33,7 @@ class hardening {
 
 
     #disable anacron , we expect server is running for 24/7
-    ##Define a function 
+    ##Define a function for comment line in file
 	define augeasnew ($file,$line){
 		$exp=regsubst($line[0], '^(un)?comment *(.*)' , '\2')
 			case $line[0] {
@@ -58,7 +63,51 @@ class hardening {
 		line => ["comment anacron",],
 	}
  
+    #secure cron files
+	file { [ '/etc/crontab', '/var/spool/cron' ]:
+    	owner => 'root',
+    	group => 'root',
+    	mode => 0500,
+  	}	
 
+	file { [ '/etc/cron.d', '/etc/cron.daily', '/etc/cron.weekly', '/etc/cron.monthly' ]:
+    	owner => 'root',
+    	group => 'root',
+    	mode => 0500,
+    	recurse => true,
+  	}
+
+  	#logging
+  	file { '/var/log/btmp':
+    	owner => 'root',
+    	group => 'root',
+    	mode => 0600,
+    	ensure => present,
+  	}
+
+  	file { [ '/var/log/lastlog', '/var/log/utmp' ]:
+    	owner => 'root',
+    	group => 'root',
+    	mode => 0600,
+  	}
+
+  	#man files
+  	file { [ '/usr/share/doc', '/usr/local/share/doc', '/usr/local/share/man', '/usr/share/man' ]:
+    	mode => 0755,
+  	}
+
+  	#passwd and shadow files
+  	file { [ '/etc/group', '/etc/passwd' ]:
+    	owner => 'root',
+    	group => 'root',
+    	mode => 0644,
+  	}
+
+ 	file { [ '/etc/shadow', '/etc/gshadow' ]:
+    	owner => 'root',
+    	group => 'root',
+    	mode => 0400,
+ 	}
 
 
 }
